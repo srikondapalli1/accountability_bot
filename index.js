@@ -1,3 +1,4 @@
+import http from 'http';
 import {
   Client,
   GatewayIntentBits,
@@ -82,5 +83,23 @@ if (!DISCORD_TOKEN || !USER_ID) {
   console.error('Missing DISCORD_TOKEN or USER_ID in .env');
   process.exit(1);
 }
+
+const PORT = process.env.PORT || 3000;
+http
+  .createServer((req, res) => {
+    if (req.url === '/health' || req.url === '/') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(
+        JSON.stringify({
+          status: 'ok',
+          bot: client.isReady() ? client.user.tag : 'starting',
+        })
+      );
+      return;
+    }
+    res.writeHead(404);
+    res.end();
+  })
+  .listen(PORT, () => console.log(`Health server listening on port ${PORT}`));
 
 client.login(DISCORD_TOKEN);
