@@ -8,7 +8,7 @@ import {
   Collection,
 } from 'discord.js';
 import { DISCORD_TOKEN, USER_ID } from './config.js';
-import { startScheduler } from './cron/scheduler.js';
+import { startKeepAlive } from './services/keepAlive.js';
 import { handleButtonInteraction, isCheckinButton } from './handlers/checkinFlow.js';
 import * as stats from './commands/stats.js';
 import * as lowpower from './commands/lowpower.js';
@@ -100,6 +100,9 @@ http
     res.writeHead(404);
     res.end();
   })
-  .listen(PORT, () => console.log(`Health server listening on port ${PORT}`));
+  .listen(PORT, () => {
+    console.log(`Health server listening on port ${PORT}`);
+    startKeepAlive();
+  });
 
 client.login(DISCORD_TOKEN);
